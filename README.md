@@ -7,7 +7,7 @@ Work in progress, so don't expect too much. Hints/comments are welcome.
 
 
 ___________________________________________________________
-Suggested links:
+## Suggested links:
 
 https://www.pololu.com
 
@@ -15,3 +15,6 @@ https://github.com/pololu/zumo-32u4-arduino-library
 
 https://github.com/pvcraven/zumo_32u4_examples
 
+github formatting syntaz (I always forget...):
+
+https://help.github.com/articles/basic-writing-and-formatting-syntax/
