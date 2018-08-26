@@ -1,5 +1,5 @@
 # Zumo32U4
-My more or less original software for the Pololu Zumo 32U4 robot.
+My (more or less original) software for the Pololu Zumo 32U4 robot.
 Work in progress, so don't expect too much. Hints/comments are welcome (giorgio.denunzio AT unisalento.it).
 
 ## Files:
