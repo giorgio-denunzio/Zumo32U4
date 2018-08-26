@@ -5,9 +5,8 @@ Work in progress, so don't expect too much. Hints/comments are welcome (giorgio.
 ## Files:
 - *ObstacleAvoidingZumo32U4.ino*: alpha version of obstacle avoiding. See discussion here https://forum.pololu.com/t/zumo-32u4-troubles-with-obstacle-detection-with-ir-sensors/15474/3
 
-
 ___________________________________________________________
-## Suggested links:
+## My links:
 ### Zumo 32U4 robot:
 - https://www.pololu.com
 - https://github.com/pololu/zumo-32u4-arduino-library
