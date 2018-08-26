@@ -1,4 +1,8 @@
 // by Giorgio De Nunzio
+// giorgio.denunzio@unisalento.it
+
+// Licence: 
+// "Do with this code what you wish. If you find it useful, please write to me and tell me about it. If you make any improvement, please let me know so we grow together!"
 
 // Useful links:
 // http://pololu.github.io/zumo-32u4-arduino-library/class_zumo32_u4_proximity_sensors.html#a2789f740828a81fe3c942998639355ae
@@ -6,13 +10,16 @@
 // NUM_OF_SENSORS = 1 or 3
 #define NUM_OF_SENSORS 1
 
-// ROBOT_MOVES = 0 or 1
-#define ROBOT_MOVES 1
+// ROBOT_MOVES = 0 (sensor readings are shown to display) or 1 (the robot also moves according to sensor readings)
+#define ROBOT_MOVES 01
 
 // A sensor reading must be greater than or equal to this
 // threshold in order for the program to consider that sensor as
 // seeing an object.
 #define SENSOR_THRESHOLD 20
+
+#define SENSOR_THRESHOLD_1 20
+#define SENSOR_THRESHOLD_2 16
 
 // delta between left and right readings, to consider the two readings as different
 #define SENSOR_DELTA 1
@@ -46,8 +53,10 @@ void setup()
 // http://pololu.github.io/zumo-32u4-arduino-library/class_zumo32_u4_i_r_pulses.html#ae72ab04d5b682b3170a1542344cb3f75
 //  uint16_t myBrightnessLevels[] = { 4, 9, 15, 23, 32, 42, 55, 70, 85, 100, 120 };   // default is { 4, 15, 32, 55, 85, 120 }
 //  uint16_t myBrightnessLevels[] = {1, 2, 4, 9, 15, 23, 32, 42, 55, 70, 85, 100, 120, 135, 150, 170};   //  OK 16 levels, threshold at 15
-  uint16_t myBrightnessLevels[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 23, 32, 42, 55, 70, 85, 100, 120, 130, 140, 150, 160, 170, 180, 190};   // 25 levels, used 23 as threshold
-  proxSensors.setBrightnessLevels(myBrightnessLevels, 25);
+  uint16_t myBrightnessLevels[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 23, 32, 42, 55, 70, 85, 100, 120, 130, 140, 150, 160, 170, 180, 190};   // 25 levels, used 20 as threshold
+//  uint16_t myBrightnessLevels[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 19, 23, 27, 32};   // 20 levels, used 16 as threshold
+  int numOfBrightnessLevels = sizeof(myBrightnessLevels)/sizeof(myBrightnessLevels[0]);
+  proxSensors.setBrightnessLevels(myBrightnessLevels, numOfBrightnessLevels);
 
   // Wait for the user to press button A.
   lcd.clear();
@@ -151,14 +160,24 @@ int obstacle()
   lcd.print(rightSensor);
   lcd.print(" ");
 
-
   int retValue = 0;
+
+#if 0
   if (centerLeftSensor >= SENSOR_THRESHOLD || centerRightSensor >= SENSOR_THRESHOLD)  // An object is visible
-    if (centerRightSensor - centerLeftSensor >= SENSOR_DELTA)    // The right value is larger, and delta is at least SENSOR_DELTA: the object is probably nearer the right LED
+    if (centerRightSensor - centerLeftSensor > SENSOR_DELTA)    // The right value is larger, and delta is at least SENSOR_DELTA: the object is probably nearer the right LED
       retValue = +1;
-    else if (centerLeftSensor - centerRightSensor >= SENSOR_DELTA)  // The left value is larger, and delta is at least SENSOR_DELTA: the object is probably nearer the left LED
+    else if (centerLeftSensor - centerRightSensor > SENSOR_DELTA)  // The left value is larger, and delta is at least SENSOR_DELTA: the object is probably nearer the left LED
       retValue = -1;
     else retValue = +2;    // The two readings are equal: the obstacle is in front
+#else // observing that when the obstacle is in front, readings are larger than when it is on the side, so I cannot use just one threshold
+  int del = centerRightSensor - centerLeftSensor;
+  if (centerLeftSensor >= SENSOR_THRESHOLD_1 || centerRightSensor >= SENSOR_THRESHOLD_1)  // An object must be in front!
+    retValue = +2;    // The two readings are equal: the obstacle is in front
+  else if (centerRightSensor >= SENSOR_THRESHOLD_2 && del >= SENSOR_DELTA)    // The right value is larger, and delta is at least SENSOR_DELTA: the object is probably nearer the right LED
+      retValue = +1;
+  else if (centerLeftSensor >= SENSOR_THRESHOLD_2  && -del >= SENSOR_DELTA)  // The left value is larger, and delta is at least SENSOR_DELTA: the object is probably nearer the left LED
+      retValue = -1;
+#endif
 
   lcd.gotoXY(0, 1);
   lcd.print(retValue);
